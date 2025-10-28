@@ -1,6 +1,12 @@
+import os
 import argparse
 from openai import OpenAI
 from agent.core import run_agent
+from dotenv import load_dotenv
+
+load_dotenv()
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL")
 
 def main():
     parser = argparse.ArgumentParser(description="Run the Codebase Agent.")
@@ -17,8 +23,8 @@ def main():
     args = parser.parse_args()
 
     client = OpenAI(
-        base_url="http://localhost:1234/v1",
-        api_key="lm-studio"
+        base_url=OPENAI_BASE_URL,
+        api_key=OPENAI_API_KEY
     )
 
     messages = [
