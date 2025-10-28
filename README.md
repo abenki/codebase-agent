@@ -7,9 +7,15 @@ Chat with your codebase — locally and privately.
 
 1. Set up environment variables
 Create a .env variable based on .env.example
+- `OPENAI_BASE_URL`: Overrides the default API base URL (`https://api.openai.com/v1`). Use for proxies, Azure OpenAI endpoints, or local compatible APIs (LM Studio for example).
+- `OPENAI_API_KEY`: The API Key of your provider if applicable or lm-studio for LM Studio
+- `MODEL_NAME`: Name of the LLM to use
 
-2. Install dependencies
+
+2. Clone the repository and install dependencies
 ```bash
+git clone git@github.com:abenki/codebase-agent.git
+cd codebase-agent
 uv sync
 ```
 
@@ -31,6 +37,12 @@ Use the `--logs` flag to enable detailed debugging output during execution.
 - All file operations (reading, writing) are sandboxed to prevent unauthorized access.
 - The agent enforces path validation to ensure no escape from the `BASE_DIR`.
 - Environment variables are loaded from `.env` for secure and consistent configuration.
+
+## 🚧 Agent Limitations
+
+The Codebase Agent has the following limitations:
+- The maximum file size that can be read is 20KB.
+- The agent cannot perform complex operations, such as refactoring or debugging.
 
 ## 🛠️ Supported Tools
 
