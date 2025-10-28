@@ -9,6 +9,11 @@ parser.add_argument(
     required=True,
     help="The question or instruction to ask the agent."
 )
+parser.add_argument(
+    "--logs",
+    action="store_true",
+    help="Enable verbose debug logging."
+)
 args = parser.parse_args()
 
 client = OpenAI(
@@ -21,4 +26,4 @@ messages = [
     {"role": "user", "content": args.question},
 ]
 
-run_agent(messages=messages, client=client)
+run_agent(messages=messages, client=client, verbose=args.logs)

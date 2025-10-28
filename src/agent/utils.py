@@ -4,13 +4,17 @@ import os
 
 BASE_DIR = os.getcwd()
 
-def debug_log(title, data=None):
+def debug_log(title, data=None, verbose=True):
     """Pretty-print debugging information safely.
     
     Args:
         title (str): Title for the log section.
         data (any, optional): Data to be logged. Defaults to None.
+        verbose (bool): Whether to print debug output.
     """
+    if not verbose:
+        return
+
     print("\n" + "="*80)
     print(f"🧠 {title} - {datetime.now().strftime('%H:%M:%S')}")
     print("="*80)
@@ -26,6 +30,7 @@ def debug_log(title, data=None):
             except Exception:
                 print(str(data))
     print()
+
 
 def safe_path(path: str) -> str:
     """

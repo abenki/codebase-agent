@@ -2,12 +2,12 @@ import json
 from agent.tools import tools, execute_tool
 from agent.utils import debug_log
 
-def run_agent(messages, model="qwen/qwen3-4b-2507", client=None):
+def run_agent(messages, model="qwen/qwen3-4b-2507", client=None, verbose=False):
     """Run the agent loop until the model produces a final answer."""
     if client is None:
         raise ValueError("OpenAI client must be provided.")
 
-    debug_log("STEP 1 — Initial messages", messages)
+    debug_log("STEP 1 — Initial messages", messages, verbose=verbose)
 
     while True:
         response = client.chat.completions.create(
@@ -17,7 +17,7 @@ def run_agent(messages, model="qwen/qwen3-4b-2507", client=None):
         )
 
         message = response.choices[0].message
-        debug_log("MODEL RESPONSE", message.model_dump())
+        debug_log("MODEL RESPONSE", message.model_dump(), verbose=verbose)
 
         # Execute all tool calls
         if message.tool_calls:
@@ -25,10 +25,10 @@ def run_agent(messages, model="qwen/qwen3-4b-2507", client=None):
             for tool_call in message.tool_calls:
                 tool_name = tool_call.function.name
                 args = json.loads(tool_call.function.arguments)
-                debug_log(f"EXECUTING TOOL: {tool_name}", args)
+                debug_log(f"EXECUTING TOOL: {tool_name}", args, verbose=verbose)
 
                 tool_output = execute_tool(tool_name, args)
-                debug_log(f"TOOL OUTPUT ({tool_name})", tool_output)
+                debug_log(f"TOOL OUTPUT ({tool_name})", tool_output, verbose=verbose)
 
                 messages.append({
                     "role": "tool",
@@ -41,7 +41,7 @@ def run_agent(messages, model="qwen/qwen3-4b-2507", client=None):
 
         # No more tool calls -> final answer
         if message.content:
-            debug_log("FINAL ANSWER", message.content)
+            debug_log("FINAL ANSWER", message.content, verbose=verbose)
             print("\n✅ FINAL ANSWER:\n" + "-"*80)
             print(message.content)
             break
