@@ -6,8 +6,9 @@ def run_agent(messages, model="qwen/qwen3-4b-2507", client=None, verbose=False):
     """Run the agent loop until the model produces a final answer."""
     if client is None:
         raise ValueError("OpenAI client must be provided.")
-
-    debug_log("STEP 1 — Initial messages", messages, verbose=verbose)
+    
+    if verbose:
+        debug_log("STEP 1 — Initial messages", messages)
 
     while True:
         response = client.chat.completions.create(
@@ -17,7 +18,8 @@ def run_agent(messages, model="qwen/qwen3-4b-2507", client=None, verbose=False):
         )
 
         message = response.choices[0].message
-        debug_log("MODEL RESPONSE", message.model_dump(), verbose=verbose)
+        if verbose:
+            debug_log("MODEL RESPONSE", message.model_dump())
 
         # Execute all tool calls
         if message.tool_calls:
@@ -25,10 +27,12 @@ def run_agent(messages, model="qwen/qwen3-4b-2507", client=None, verbose=False):
             for tool_call in message.tool_calls:
                 tool_name = tool_call.function.name
                 args = json.loads(tool_call.function.arguments)
-                debug_log(f"EXECUTING TOOL: {tool_name}", args, verbose=verbose)
+                if verbose:
+                    debug_log(f"EXECUTING TOOL: {tool_name}", args)
 
                 tool_output = execute_tool(tool_name, args)
-                debug_log(f"TOOL OUTPUT ({tool_name})", tool_output, verbose=verbose)
+                if verbose:
+                    debug_log(f"TOOL OUTPUT ({tool_name})", tool_output)
 
                 messages.append({
                     "role": "tool",
@@ -41,12 +45,14 @@ def run_agent(messages, model="qwen/qwen3-4b-2507", client=None, verbose=False):
 
         # No more tool calls -> final answer
         if message.content:
-            debug_log("FINAL ANSWER", message.content, verbose=verbose)
-            print("\n✅ FINAL ANSWER:\n" + "-"*80)
+            if verbose:
+                debug_log("FINAL ANSWER", message.content)
+                print("\n✅ FINAL ANSWER:\n" + "-"*80)
             print(message.content)
-            break
+            messages.append({"role": "assistant", "content": message.content})
+            return messages
 
         # Safety guard
         if response.choices[0].finish_reason == "stop":
             print("Model ended without content.")
-            break
+            return messages
