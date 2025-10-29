@@ -2,6 +2,7 @@ import os
 import argparse
 from openai import OpenAI
 from agent.core import run_agent
+from agent.config.prompts import SYSTEM_PROMPT
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -28,7 +29,7 @@ def main():
     )
 
     messages = [
-        {"role": "system", "content": "You are an assistant that can make changes to a codebase."}
+        {"role": "system", "content": SYSTEM_PROMPT}
     ]
 
     if args.question:
