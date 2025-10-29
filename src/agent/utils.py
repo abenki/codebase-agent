@@ -46,7 +46,9 @@ def safe_path(path: str) -> str:
 
     # Check if resolved path is inside BASE_DIR
     if not full_path.startswith(BASE_DIR):
-        raise ValueError(f"Access denied: {full_path} is outside the allowed directory.")
+        raise ValueError(
+            f"Access denied: '{full_path}' is outside the allowed working directory ({BASE_DIR})."
+        )
 
     return full_path
 

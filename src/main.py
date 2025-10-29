@@ -1,13 +1,8 @@
-import os
 import argparse
 from openai import OpenAI
 from agent.core import run_agent
 from agent.config.prompts import SYSTEM_PROMPT
-from dotenv import load_dotenv
-
-load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL")
+from agent.config.settings import MODEL_NAME, OPENAI_API_KEY, OPENAI_BASE_URL
 
 def main():
     parser = argparse.ArgumentParser(description="Run Craft Code.")
@@ -45,6 +40,10 @@ def main():
             except (EOFError, KeyboardInterrupt):
                 print("\n👋 Session ended.")
                 break
+
+            if not user_input:
+                # Skip empty lines for better UX
+                continue
             
             if user_input.lower() in {"exit", "quit"}:
                 print("👋 Goodbye!")

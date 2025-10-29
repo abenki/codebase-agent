@@ -1,11 +1,7 @@
-import os
 import json
 from agent.tools import tools, execute_tool
 from agent.utils import debug_log
-from dotenv import load_dotenv
-
-load_dotenv()
-MODEL_NAME = os.getenv("MODEL_NAME")
+from agent.config.settings import MODEL_NAME
 
 def run_agent(messages, model=MODEL_NAME, client=None, verbose=False):
     """Run the agent loop until the model produces a final answer."""
