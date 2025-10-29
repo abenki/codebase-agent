@@ -1,4 +1,4 @@
-# Codebase Agent
+# Craft Code
 
 A local LLM-powered assistant that can explore, analyze, and modify your codebase through structured tool calls.
 Chat with your codebase — locally and privately.
@@ -15,14 +15,14 @@ Create a .env variable based on .env.example
 
 2. Clone the repository and install dependencies
 ```bash
-git clone git@github.com:abenki/codebase-agent.git
-cd codebase-agent
+git clone git@github.com:abenki/craft-code.git
+cd craft-code
 uv sync
 ```
 
 3. Launch LM Studio, load the model and start the server
- 
-4. **Run the agent**
+
+4. Run Craft Code
 - For a single query:
      ```bash
      uv run src/main.py -q "List all files in the current directory."
@@ -31,7 +31,7 @@ uv sync
      ```bash
      uv run src/main.py
      ```
-     Then type your questions, and the agent will respond step-by-step.
+     Then type your questions, and Craft Code will respond step-by-step.
 
 Use the `--logs` flag to enable detailed debugging output during execution.
 
@@ -43,7 +43,7 @@ Use the `--logs` flag to enable detailed debugging output during execution.
 
 ## 🚧 Agent Limitations
 
-The Codebase Agent has the following limitations:
+Craft Code has the following limitations:
 - The maximum file size that can be read is 20KB.
 - The agent cannot perform complex operations, such as refactoring or debugging.
 

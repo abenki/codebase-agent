@@ -10,7 +10,7 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL")
 
 def main():
-    parser = argparse.ArgumentParser(description="Run the Codebase Agent.")
+    parser = argparse.ArgumentParser(description="Run Craft Code.")
     parser.add_argument(
         "-q", "--question",
         type=str,
@@ -38,7 +38,7 @@ def main():
         run_agent(messages=messages, client=client, verbose=args.logs)
     else:
         # Interactive session mode
-        print("🧠 Codebase Agent session started. Type 'exit' or 'quit' to end.\n")
+        print("🧠 Craft Code session started. Type 'exit' or 'quit' to end.\n")
         while True:
             try:
                 user_input = input("🧑‍💻 You: ").strip()
