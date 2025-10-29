@@ -4,6 +4,7 @@ A local LLM-powered assistant that can explore, analyze, and modify your codebas
 Chat with your codebase — locally and privately.
 
 ## 🚀 Getting Started
+The instructions here are given for using Craft Code with LM Studio running in the background.
 
 1. Set up environment variables
 Create a .env variable based on .env.example
@@ -19,7 +20,9 @@ cd codebase-agent
 uv sync
 ```
 
-3. **Run the agent**
+3. Launch LM Studio, load the model and start the server
+ 
+4. **Run the agent**
 - For a single query:
      ```bash
      uv run src/main.py -q "List all files in the current directory."
