@@ -35,6 +35,7 @@ Then type your questions, and Craft Code will respond step-by-step.
 - `--logs`: Use this flag to enable detailed debugging output during execution.
 - `--workspace`: Use this argument to specify the folder in which Craft Code should operate. By default, Craft Code runs in the current working directory.
 - `--question` or `-q`: Use this argument to run Craft Code in single query mode.
+- `--version` or `-v`: Shows the installed version of Craft Code.
 
 ## 🔐 Security & Safety
 

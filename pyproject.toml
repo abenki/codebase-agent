@@ -1,6 +1,6 @@
 [project]
 name = "craft-code"
-version = "0.1.0"
+version = "0.1.1"
 description = "Craft Code – a local developer assistant"
 readme = "README.md"
 requires-python = ">=3.14"

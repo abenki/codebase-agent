@@ -1,4 +1,5 @@
 import argparse
+import tomllib
 from openai import OpenAI
 from agent.core import run_agent
 from agent.utils import set_base_dir
@@ -26,7 +27,19 @@ def main():
         default=".",
         help="Directory in which Craft Code must operate (defaults to current working directory)."
     )
+    parser.add_argument(
+        "-v", "--version",
+        action="store_true",
+        help="Show Craft Code version."
+    )
     args = parser.parse_args()
+
+    if args.version:
+        with open("pyproject.toml", "rb") as f:
+            pyproject = tomllib.load(f)
+            version = pyproject["project"]["version"]
+            print(f"Craft Code version: {version}")
+        return
     
     set_base_dir(args.workspace)
 
