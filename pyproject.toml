@@ -1,7 +1,7 @@
 [project]
 name = "craft-code"
 version = "0.1.0"
-description = "Add your description here"
+description = "Craft Code – a local developer assistant"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
@@ -13,3 +13,6 @@ dependencies = [
 dev = [
     "pytest>=8.4.2",
 ]
+
+[project.scripts]
+craft-code = "main:main"

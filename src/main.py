@@ -1,11 +1,15 @@
 import argparse
 from openai import OpenAI
 from agent.core import run_agent
+from agent.utils import set_base_dir
 from agent.config.prompts import SYSTEM_PROMPT
-from agent.config.settings import MODEL_NAME, OPENAI_API_KEY, OPENAI_BASE_URL
+from agent.config.settings import OPENAI_API_KEY, OPENAI_BASE_URL
 
 def main():
-    parser = argparse.ArgumentParser(description="Run Craft Code.")
+    parser = argparse.ArgumentParser(
+        description="Craft Code. A local LLM-powered assistant that can explore, " \
+            "analyze, and modify your codebase through structured tool calls. " \
+            "Chat with your codebase — locally and privately.")
     parser.add_argument(
         "-q", "--question",
         type=str,
@@ -16,7 +20,15 @@ def main():
         action="store_true",
         help="Show detailed debug logs."
     )
+    parser.add_argument(
+        "--workspace",
+        type=str,
+        default=".",
+        help="Directory in which Craft Code must operate (defaults to current working directory)."
+    )
     args = parser.parse_args()
+    
+    set_base_dir(args.workspace)
 
     client = OpenAI(
         base_url=OPENAI_BASE_URL,
@@ -33,7 +45,7 @@ def main():
         run_agent(messages=messages, client=client, verbose=args.logs)
     else:
         # Interactive session mode
-        print("🧠 Craft Code session started. Type 'exit' or 'quit' to end.\n")
+        print("⚒️ Craft Code session started. Type 'exit' or 'quit' to end.\n")
         while True:
             try:
                 user_input = input("🧑‍💻 You: ").strip()

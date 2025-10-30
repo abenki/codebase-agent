@@ -56,3 +56,9 @@ def rel_path(path: str) -> str:
     """Return the path relative to BASE_DIR."""
     from .utils import BASE_DIR
     return os.path.relpath(path, BASE_DIR)
+
+def set_base_dir(path: str):
+    """Set the base working directory for Craft Code."""
+    global BASE_DIR
+    BASE_DIR = os.path.realpath(path)
+    print(f"📁 Workspace set to: {BASE_DIR}")
