@@ -6,6 +6,7 @@ Chat with your codebase — locally and privately.
 ## 🚀 Installation
 The instructions here are given for using Craft Code with LM Studio running in the background. If you want to use another provider or local LLM, you will need to set up the environment variables (see [Set up environment variables](#️-set-up-environment-variables)).
 
+Prerequisite: you need to have installed [uv](https://docs.astral.sh/uv/#highlights) and [LM Studio](https://lmstudio.ai/) if you want to run Craft-Code without additional configuration.
 
 1. Clone the repository and install Craft Code
 ```bash
