@@ -1,6 +1,6 @@
 import os
 import re
-from agent.utils import safe_path
+from craft_code.utils import safe_path
 
 # Tool definitions
 tools = [

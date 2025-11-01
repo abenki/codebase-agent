@@ -3,6 +3,8 @@
 A local LLM-powered assistant that can explore, analyze, and modify your codebase through structured tool calls.
 Chat with your codebase — locally and privately.
 
+![Craft Code screenshot](/docs/assets/craft-code-screenshot.png "Craft Code Screenshot")
+
 ## 🚀 Installation
 The instructions here are given for using Craft Code with LM Studio running in the background. If you want to use another provider or local LLM, you will need to set up the environment variables (see [Set up environment variables](#️-set-up-environment-variables)).
 

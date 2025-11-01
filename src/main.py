@@ -1,10 +1,10 @@
 import argparse
 import tomllib
 from openai import OpenAI
-from agent.core import run_agent
-from agent.utils import set_base_dir
-from agent.config.prompts import SYSTEM_PROMPT
-from agent.config.settings import OPENAI_API_KEY, OPENAI_BASE_URL
+from craft_code.core import run_agent
+from craft_code.utils import set_base_dir
+from craft_code.config.prompts import SYSTEM_PROMPT
+from craft_code.config.settings import OPENAI_API_KEY, OPENAI_BASE_URL
 
 def main():
     parser = argparse.ArgumentParser(
