@@ -17,3 +17,6 @@ data/
 
 # Environment variables
 .env
+
+# Context files
+CONTEXT.md

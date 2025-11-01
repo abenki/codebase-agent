@@ -15,4 +15,4 @@ dev = [
 ]
 
 [project.scripts]
-craft-code = "main:main"
+craft-code = "craft_code.cli:main"
