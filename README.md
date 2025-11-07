@@ -6,44 +6,94 @@ Chat with your codebase — locally and privately.
 ![Craft Code screenshot](/docs/assets/craft-code-screenshot.png "Craft Code Screenshot")
 
 ## 🚀 Installation
-The instructions here are given for using Craft Code with LM Studio running in the background. If you want to use another provider or local LLM, you will need to set up the environment variables (see [Set up environment variables](#️-set-up-environment-variables)).
+Craft Code runs locally with your own LLM setup. But if you prefer, you can use an OpenAI API key or any API key from a provider supporting OpenAI-style endpoints.
 
-Prerequisite: you need to have installed [uv](https://docs.astral.sh/uv/#highlights) and [LM Studio](https://lmstudio.ai/) if you want to run Craft-Code without additional configuration.
+Prerequisites:
+- [uv](https://docs.astral.sh/uv/#highlights)
+- [LM Studio](https://lmstudio.ai/), [Ollama](https://ollama.com/) or an OpenAI API key
 
-1. Clone the repository and install Craft Code
+### 1. Clone the repository and install Craft Code
 ```bash
 git clone git@github.com:abenki/craft-code.git
 cd craft-code
 uv tool install .
+craft-code --version
+```
+This installs the `craft-code` command globally in your system path.
+
+### 2. Configure Craft Code
+
+By default, Craft Code will connect to an LM Studio server running at http://localhost:1234/v1. To switch provider or customize settings, run:
+
+```bash
+craft-code --configure
 ```
 
-2. Launch LM Studio, load the model you want to use and start the server. By default, the model used is `"qwen/qwen3-4b-2507"`. If you want to change this behavior, please check [Set up environment variables](#️-set-up-environment-variables).
+This will create / edit your configuration file at: ```~/.config/craft-code/config.toml```
+
+
+Example content:
+```toml
+provider = "lm_studio"
+
+[models.lm_studio]
+base_url = "http://localhost:1234/v1"
+model = "qwen/qwen3-4b-2507"
+api_key = "lm-studio"
+
+[models.ollama]
+base_url = "http://localhost:11434/v1"
+model = "qwen3:4b"
+api_key = "ollama"
+
+[models.openai]
+base_url = "https://api.openai.com/v1"
+model = "gpt-5"
+api_key = ""
+```
+
+### 3. Updating or deleting the app
+To update Craft Code, first run `git pull` in your local craft-code repository, then run `uv tool upgrade craft-code`.
+
+If you wish to delete Craft Code, simply run `uv tool uninstall craft-code` and optionally `uv cache clean`.
 
 ## 🧑‍💻 Usage
 
+### Launch the app you want to use for LLM serving
+For LM Studio, launch the app, load the model you want to use and start the server.
+
+For Ollama, run `ollama serve` from your terminal.
+
 ### Single query
+If you just want to ask a single question:
 ```bash
 craft-code -q "List all files in the current directory."
 ```
 
 ### Interactive mode
+To start an interactive session with Craft Code:
 ```bash
 craft-code
 ```
      
 Then type your questions, and Craft Code will respond step-by-step.
 
-### Arguments
-- `--logs`: Use this flag to enable detailed debugging output during execution.
-- `--workspace`: Use this argument to specify the folder in which Craft Code should operate. By default, Craft Code runs in the current working directory.
-- `--question` or `-q`: Use this argument to run Craft Code in single query mode.
-- `--version` or `-v`: Shows the installed version of Craft Code.
+### CLI Options
+| Flag               | Description                                  |
+| ------------------ | -------------------------------------------- |
+| `-q, --question`   | Ask a single question (non-interactive mode) |
+| `--logs`           | Show detailed debug logs during execution    |
+| `--workspace PATH` | Specify working directory (default: `.`)     |
+| `--configure`      | Launch interactive configuration wizard      |
+| `-v, --version`    | Show current Craft Code version              |
+
 
 ## 🔐 Security & Safety
 
-- All file operations (reading, writing) are sandboxed to prevent unauthorized access.
-- The agent enforces path validation to ensure no escape from the `BASE_DIR`.
-- Environment variables are loaded from `.env` for secure and consistent configuration.
+- All paths are validated to prevent directory traversal.
+- All file operations are sandboxed — Craft Code cannot access files outside the workspace.
+
+Example: if you run `craft-code` inside `/Users/bob/projects/my-app`, it cannot access files outside that folder.
 
 ## 🚧 Agent Limitations
 
@@ -54,13 +104,22 @@ Craft Code has the following limitations:
 ## 🛠️ Supported Tools
 
 The agent can perform the following operations:
-- `list_directory`: List files in a directory.
-- `read_file`: Read file content (up to 20KB).
-- `search_in_file`: Search for text or regex patterns in a file.
-- `write_file`: Write or overwrite a file safely.
+| Tool             | Description                       |
+| ---------------- | --------------------------------- |
+| `list_directory` | List files in a directory         |
+| `read_file`      | Read file content (up to 20 KB)   |
+| `search_in_file` | Search for text or regex patterns |
+| `write_file`     | Write or overwrite a file safely  |
 
-## ⚙️ Set up environment variables
-Create a `.env` file based on `.env.example` and modify your variables as you need.
-- `OPENAI_BASE_URL`: Overrides the default API base URL (`https://api.openai.com/v1`). Use for proxies, Azure OpenAI endpoints, or local compatible APIs (LM Studio for example). `.env.example` shows the base URL for LM Studio
-- `OPENAI_API_KEY`: The API Key of your provider if applicable or lm-studio for LM Studio
-- `MODEL_NAME`: Name of the LLM to use. `.env.example` shows the default model used.
+
+## 💻 Dev workflow
+If you want to run Craft Code in development mode:
+```bash
+git clone git@github.com:abenki/craft-code.git
+cd craft-code
+uv sync
+uv pip install -e .
+uv run -m craft_code.cli
+```
+
+This lets you test new features and modify the source code directly.

@@ -1,15 +1,18 @@
 import json
 from craft_code.tools import tools, execute_tool
 from craft_code.utils import debug_log
-from craft_code.config.settings import MODEL_NAME
+from craft_code.config.loader import get_active_model_config
 
-def run_agent(messages, model=MODEL_NAME, client=None, verbose=False):
+def run_agent(messages, client=None, verbose=False):
     """Run the agent loop until the model produces a final answer."""
     if client is None:
         raise ValueError("OpenAI client must be provided.")
     
     if verbose:
         debug_log("STEP 1 — Initial messages", messages)
+
+    config = get_active_model_config()
+    model = config["model"]
 
     while True:
         response = client.chat.completions.create(
