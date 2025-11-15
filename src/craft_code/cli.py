@@ -107,6 +107,19 @@ def version():
         version = pyproject["project"]["version"]
         typer.echo(f"Craft Code version: {version}")
 
+@app.command("tui")
+def tui(
+    ctx: typer.Context,
+    logs: bool = typer.Option(False, "--logs", help="Enable debug logs"),
+    workspace: str = typer.Option(".", "--workspace", help="Set workspace directory"),
+):
+    """Launch Craft Code TUI (default behavior)."""
+    if ctx.invoked_subcommand is None:
+        # Launch TUI
+        from craft_code.tui.app import CraftCodeApp
+        app_instance = CraftCodeApp(workspace=workspace, verbose=logs)
+        app_instance.run()
+
 def main():
     if len(sys.argv) == 1:
         sys.argv.append("chat")
