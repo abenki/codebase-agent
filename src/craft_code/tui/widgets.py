@@ -3,6 +3,8 @@ from textual.containers import VerticalScroll
 from rich.text import Text
 from rich.markdown import Markdown
 from datetime import datetime
+import tomllib
+from pathlib import Path
 
 
 class ChatHistory(VerticalScroll):
@@ -23,11 +25,11 @@ class ChatHistory(VerticalScroll):
         Args:
             content: Message content
         """
-        timestamp = datetime.now().strftime("%H:%M:%S")
+        #timestamp = datetime.now().strftime("%H:%M:%S")
         text = Text()
-        text.append(f"[{timestamp}] ", style="dim")
-        text.append("You: ", style="bold green")
-        text.append(content)
+        #text.append(f"[{timestamp}] ", style="dim")
+        text.append("> ", style="bold #9ece6a")
+        text.append(content, style="#c0caf5")
         
         message_widget = Static(text, classes="user-message")
         self.mount(message_widget)
@@ -39,14 +41,13 @@ class ChatHistory(VerticalScroll):
         Args:
             content: Message content
         """
-        timestamp = datetime.now().strftime("%H:%M:%S")
+        #timestamp = datetime.now().strftime("%H:%M:%S")
         text = Text()
-        text.append(f"[{timestamp}] ", style="dim")
-        text.append("Craft Code: ", style="bold cyan")
-        text.append("\n")
+        #text.append(f"[{timestamp}] ", style="dim")
+        text.append("✦ ", style="bold #7aa2f7")
         
-        message_widget = Static(text, classes="assistant-message")
-        self.mount(message_widget)
+        header_widget = Static(text, classes="assistant-message")
+        self.mount(header_widget)
         
         # Render markdown content
         try:
@@ -55,7 +56,8 @@ class ChatHistory(VerticalScroll):
             self.mount(md_widget)
         except Exception:
             # Fallback to plain text
-            plain_widget = Static(content, classes="assistant-message")
+            content_text = Text(content, style="#c0caf5")
+            plain_widget = Static(content_text, classes="assistant-message")
             self.mount(plain_widget)
         
         self.scroll_end(animate=False)
@@ -66,11 +68,11 @@ class ChatHistory(VerticalScroll):
         Args:
             content: Message content
         """
-        timestamp = datetime.now().strftime("%H:%M:%S")
+        #timestamp = datetime.now().strftime("%H:%M:%S")
         text = Text()
-        text.append(f"[{timestamp}] ", style="dim")
-        text.append("System: ", style="bold yellow italic")
-        text.append(content, style="italic")
+        #text.append(f"[{timestamp}] ", style="dim")
+        text.append(" ", style="bold #e0af68")
+        text.append(content, style="italic #bb9af7")
         
         message_widget = Static(text, classes="system-message")
         self.mount(message_widget)
@@ -83,11 +85,11 @@ class ChatHistory(VerticalScroll):
             tool_name: Name of the tool
             content: Tool output content
         """
-        timestamp = datetime.now().strftime("%H:%M:%S")
+        #timestamp = datetime.now().strftime("%H:%M:%S")
         text = Text()
-        text.append(f"[{timestamp}] ", style="dim")
-        text.append(f"Tool ({tool_name}): ", style="bold magenta dim")
-        text.append(content[:200], style="dim")  # Truncate long outputs
+        #text.append(f"[{timestamp}] ", style="dim")
+        text.append(f" {tool_name}: ", style="bold #bb9af7")
+        text.append(content[:200], style="dim")
         if len(content) > 200:
             text.append("...", style="dim")
         
@@ -101,11 +103,11 @@ class ChatHistory(VerticalScroll):
             child.remove()
 
 
-class StatusPanel(Static):
-    """Widget to display current status and configuration."""
+class StatusLine(Static):
+    """Neovim-style status line at the bottom."""
 
     def __init__(self, **kwargs):
-        """Initialize StatusPanel widget.
+        """Initialize StatusLine widget.
         
         Args:
             **kwargs: Additional keyword arguments for Static
@@ -115,6 +117,23 @@ class StatusPanel(Static):
         self.model = "unknown"
         self.workspace = "."
         self.processing = False
+        self.version = self._get_version()
+
+    def _get_version(self) -> str:
+        """Get Craft Code version from pyproject.toml.
+        
+        Returns:
+            Version string
+        """
+        try:
+            pyproject_path = Path(__file__).parent.parent.parent.parent / "pyproject.toml"
+            if pyproject_path.exists():
+                with open(pyproject_path, "rb") as f:
+                    pyproject = tomllib.load(f)
+                    return pyproject["project"]["version"]
+        except Exception:
+            pass
+        return "unknown"
 
     def update_config(self, config: dict, workspace: str) -> None:
         """Update configuration display.
@@ -139,41 +158,26 @@ class StatusPanel(Static):
 
     def refresh_display(self) -> None:
         """Refresh the status display."""
-        status_icon = "🔄" if self.processing else "✓"
-        status_text = "Processing..." if self.processing else "Ready"
+        status_text = "processing" if self.processing else "ready"
+        status_color = "#e0af68" if self.processing else "#9ece6a"
         
         content = Text()
-        content.append("Status\n", style="bold underline cyan")
-        content.append(f"{status_icon} {status_text}\n\n", style="green" if not self.processing else "yellow")
         
-        content.append("Configuration\n", style="bold underline cyan")
-        content.append("Provider: ", style="dim")
-        content.append(f"{self.provider}\n", style="bold")
-        content.append("Model: ", style="dim")
-        content.append(f"{self.model}\n\n", style="bold")
+        # Left section: app name and version
+        content.append(" Craft Code ", style="bold #7aa2f7")
+        content.append(f"v{self.version}", style="dim")
         
-        content.append("Workspace\n", style="bold underline cyan")
-        content.append(f"{self.workspace}\n\n", style="dim")
+        # Middle section: status
+        content.append(" │ ", style="dim")
+        content.append(status_text, style=status_color)
         
-        content.append("Tools\n", style="bold underline cyan")
-        tools = [
-            "list_directory",
-            "read_file",
-            "search_in_file",
-            "write_file"
-        ]
-        for tool in tools:
-            content.append(f"• {tool}\n", style="dim")
-        
-        content.append("\n")
-        content.append("Shortcuts\n", style="bold underline cyan")
-        content.append("Ctrl+C: Quit\n", style="dim")
-        content.append("Ctrl+L: Logs\n", style="dim")
-        content.append("Ctrl+R: Clear\n", style="dim")
-        content.append("\n")
-        content.append("/exit: Quit\n", style="dim")
-        content.append("/clear: Clear chat\n", style="dim")
-        content.append("/help: Show help\n", style="dim")
+        # Right section: provider, model, workspace
+        content.append(" │ ", style="dim")
+        content.append(f"{self.provider}", style="#bb9af7")
+        content.append(" • ", style="dim")
+        content.append(f"{self.model}", style="#7aa2f7")
+        content.append(" │ ", style="dim")
+        content.append(f"{self.workspace}", style="dim")
         
         self.update(content)
 
@@ -197,4 +201,4 @@ class LogPanel(RichLog):
             message: Log message
         """
         timestamp = datetime.now().strftime("%H:%M:%S.%f")[:-3]
-        self.write(f"[{timestamp}] {message}")
+        self.write(Text(f"[{timestamp}] {message}", style="#565f89"))

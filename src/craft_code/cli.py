@@ -117,7 +117,7 @@ def tui(
     if ctx.invoked_subcommand is None:
         # Launch TUI
         from craft_code.tui.app import CraftCodeApp
-        app_instance = CraftCodeApp(workspace=workspace, verbose=logs)
+        app_instance = CraftCodeApp(workspace=workspace)
         app_instance.run()
 
 def main():
